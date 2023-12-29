@@ -10,6 +10,9 @@ class Raycasting:
         ox, oy = self.game.player.pos
         x_map, y_map = self.game.player.map_pos
 
+        min_depth = float('inf')
+        max_depth = float('-inf')
+
         ray_angle = self.game.player.angle - HALF_FOV + 0.0001
         for ray in range(NUM_RAYS):
             sin_a = math.sin(ray_angle)
@@ -66,7 +69,13 @@ class Raycasting:
             proj_height = SCREEN_DIST / (depth + 0.0001)
                             
             #draw walls
-            pg.draw.rect(self.game.screen, 'white', ( ray * SCALE, HALF_HEIGHT - proj_height // 2, SCALE , proj_height))
+            min_depth = min(min_depth, depth)
+            max_depth = max(max_depth, depth)
+            print(f'min_depth: {min_depth}, max_depth: {max_depth}')
+
+            # color = [ 255 / ( 1 + depth ** 5 * 0.00002) ] * 3 #create a list containing the calculated color intensity. The '* 3' replicates the list three times
+            color = [ 255 / ( 1 + depth / 20 + 0.0001 ) ] * 3
+            pg.draw.rect(self.game.screen, color, ( ray * SCALE, HALF_HEIGHT - proj_height // 2, SCALE , proj_height))
         
 
             ray_angle += DELTA_ANGLE
