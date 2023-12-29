@@ -16,7 +16,7 @@ class Raycasting:
             cos_a = math.cos(ray_angle)
 
             #horizontals
-            y_hor, dy = (y_map + 1, 1) if sin_a > 0 else (y_map - 1e-6, -1)
+            y_hor, dy = (y_map + 1, 1) if sin_a > 0 else (y_map - 1e-6, -1) #1e-6 = 0.000001
 
             depth_hor = (y_hor - oy) / sin_a
             x_hor = ox + depth_hor * cos_a
