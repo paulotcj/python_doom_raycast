@@ -1,5 +1,7 @@
 import pygame as pg
 from settings import *
+import os
+from collections import deque
 
 class SpriteObject:
     def __init__(self, game, path = 'resources/sprites/static_sprites/candlebra.png', 
@@ -55,3 +57,49 @@ class SpriteObject:
 
     def update(self):
         self.get_sprite()
+
+#--------------------------------------------------------------
+
+class AnimatedSprite(SpriteObject):
+    def __init__(self, game, path = 'resources/sprites/animated_sprites/green_light/0.png',
+                 pos = (11.5, 3.5), scale = 0.8, shift = 0.15, animation_time = 120):
+        
+        super().__init__(game,path,pos,scale,shift)
+
+        self.animation_time = animation_time
+        self.path = path.rsplit('/',1)[0] # extracts the first element of the list returned by path.rsplit which is the part of the path before the last '/' - this is often used to get the directory part of a file path
+        self.images = self.get_images(self.path)
+        self.animation_time_prev = pg.time.get_ticks()
+        self.animation_trigger = False
+    
+    def update(self):
+        super().update()
+        self.check_animation_time()
+        self.animate(self.images)
+
+    def animate(self, images):
+        if self.animation_trigger:
+            # images.rotate(-1): This calls the rotate method on the deque object. 
+            # The rotate method takes an integer as an argument and rotates the deque that many steps to the right. 
+            # If the integer is negative, it rotates to the left. 
+            # Images.rotate(-1) rotates the deque one step to the left. This means the first element is moved to the end, the second element 
+            # becomes the first, the third becomes the second, ...
+            images.rotate(-1)
+            self.image = images[0]
+
+    def check_animation_time(self):
+        self.animation_trigger = False
+        time_now = pg.time.get_ticks()
+        if time_now - self.animation_time_prev > self.animation_time:
+            self.animation_time_prev = time_now
+            self.animation_trigger = True
+        
+    def get_images(self, path):
+        images = deque() #double ended queue
+        for file_name in os.listdir(self.path):
+            if os.path.isfile(os.path.join(self.path, file_name)):
+                img = pg.image.load(path + '/' + file_name).convert_alpha()
+                images.append(img)
+        
+        return images
+
