@@ -17,7 +17,7 @@ class Game:
     def new_game(self):
         self.map = Map(self)
         self.player = Player(self)
-        self.object_renderer = ObjectRenderer(self)
+        self.object_renderer = ObjectRenderer(self) 
         self.ray_casting = Raycasting(self)
 
     def update(self):
@@ -30,6 +30,7 @@ class Game:
 
     def draw(self):
         self.screen.fill('black')
+        self.object_renderer.draw()
         # self.map.draw()
         # self.player.draw()
 
