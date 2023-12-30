@@ -18,7 +18,7 @@ class Game:
         self.map = Map(self)
         self.player = Player(self)
         self.object_renderer = ObjectRenderer(self) 
-        self.ray_casting = Raycasting(self)
+        self.ray_casting = RayCasting(self)
 
     def update(self):
         self.player.update()

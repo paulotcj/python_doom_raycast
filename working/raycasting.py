@@ -2,34 +2,47 @@ import pygame as pg
 import math
 from settings import *
 
-class Raycasting:
+
+class RayCasting:
     def __init__(self, game):
         self.game = game
         self.ray_casting_result = []
         self.objects_to_render = []
-        self.texture = self.game.object_renderer.wall_texture
+        self.textures = self.game.object_renderer.wall_textures
 
     def get_objects_to_render(self):
         self.objects_to_render = []
         for ray, values in enumerate(self.ray_casting_result):
             depth, proj_height, texture, offset = values
 
-            wall_column = self.texture[texture].subsurface(
-                offset * (TEXTURE_SIZE - SCALE), 0, SCALE, TEXTURE_SIZE
+            if proj_height < HEIGHT:
+                wall_column = self.textures[texture].subsurface(
+                    offset * (TEXTURE_SIZE - SCALE), 0, SCALE, TEXTURE_SIZE
+                    )
+                
+                wall_column = pg.transform.scale(wall_column, (SCALE, proj_height))
+                wall_pos = (ray * SCALE , HALF_HEIGHT - proj_height // 2)
+            else:
+                texture_height = TEXTURE_SIZE * HEIGHT / proj_height
+                wall_column = self.textures[texture].subsurface(
+                    offset * (TEXTURE_SIZE - SCALE), HALF_TEXTURE_SIZE - texture_height // 2, 
+		    SCALE, texture_height
                 )
-            
-            wall_column = pg.transform.scale(wall_column, (SCALE, proj_height))
-            wall_pos = (ray * SCALE , HALF_HEIGHT - proj_height // 2)
+
+                wall_column = pg.transform.scale(wall_column, (SCALE, HEIGHT))
+                wall_pos = (ray * SCALE, 0)
+                
 
             self.objects_to_render.append( (depth, wall_column, wall_pos) )
 
 
     def ray_cast(self):
         self.ray_casting_result = []
+        texture_vert, texture_hor = 1, 1
         ox, oy = self.game.player.pos
         x_map, y_map = self.game.player.map_pos
 
-        texture_vert = texture_hor = 1 , 1
+        
 
         ray_angle = self.game.player.angle - HALF_FOV + 0.0001
         for ray in range(NUM_RAYS):
@@ -82,7 +95,7 @@ class Raycasting:
             else:
                 depth, texture = depth_hor, texture_hor
                 x_hor %= 1
-                offset = (1 - x_hor) if sin_a < 0 else x_hor
+                offset = (1 - x_hor) if sin_a > 0 else x_hor
 
             # #draw for debug
             # pg.draw.line(self.game.screen, 'yellow', (100 * ox, 100 * oy), 
