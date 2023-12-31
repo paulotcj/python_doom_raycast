@@ -97,9 +97,9 @@ class RayCasting:
                 x_hor %= 1
                 offset = (1 - x_hor) if sin_a > 0 else x_hor
 
-            # #draw for debug
-            # pg.draw.line(self.game.screen, 'yellow', (100 * ox, 100 * oy), 
-            #              (100 * ox + 100 * depth * cos_a, 100 * oy + 100 * depth * sin_a), 2)       
+            #draw for debug
+            pg.draw.line(self.game.screen, 'yellow', (100 * ox, 100 * oy), 
+                         (100 * ox + 100 * depth * cos_a, 100 * oy + 100 * depth * sin_a), 2)       
             
             #remove fishbowl effect
             depth *= math.cos(self.game.player.angle - ray_angle)
