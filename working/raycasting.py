@@ -118,6 +118,8 @@ class RayCasting:
 
             ray_angle += DELTA_ANGLE
 
+
+
     def update(self):
         self.ray_cast()
         self.get_objects_to_render()
