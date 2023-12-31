@@ -12,7 +12,7 @@ class SpriteObject:
         self.x, self.y = pos
         self.image = pg.image.load(path).convert_alpha()
         self.IMAGE_WIDTH = self.image.get_width()
-        self.IMAGE_HALF_WIDTH = self.IMAGE_WIDTH // 2
+        self.IMAGE_HALF_WIDTH = self.image.get_width() // 2
         self.IMAGE_RATIO = self.IMAGE_WIDTH / self.image.get_height()
         self.dx, self.dy, self.theta, self.screen_x, self.dist, self.norm_dist = 0, 0, 0, 0, 1, 1
         self.sprite_half_width = 0
@@ -62,7 +62,7 @@ class SpriteObject:
 
 class AnimatedSprite(SpriteObject):
     def __init__(self, game, path = 'resources/sprites/animated_sprites/green_light/0.png',
-                 pos = (11.5, 3.5), scale = 0.8, shift = 0.15, animation_time = 120):
+                 pos = (11.5, 3.5), scale = 0.8, shift = 0.16, animation_time = 120):
         
         super().__init__(game,path,pos,scale,shift)
 
@@ -96,8 +96,8 @@ class AnimatedSprite(SpriteObject):
         
     def get_images(self, path):
         images = deque() #double ended queue
-        for file_name in os.listdir(self.path):
-            if os.path.isfile(os.path.join(self.path, file_name)):
+        for file_name in os.listdir(path):
+            if os.path.isfile(os.path.join(path, file_name)):
                 img = pg.image.load(path + '/' + file_name).convert_alpha()
                 images.append(img)
         
