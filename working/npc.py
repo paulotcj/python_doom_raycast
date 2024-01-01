@@ -45,6 +45,10 @@ class NPC(AnimatedSprite):
             dy = math.sin(angle) * self.speed
             self.check_wall_collision(dx, dy)
 
+    def attack(self):
+        if self.animation_trigger:
+            self.game.sound.npc_shot.play()
+
     def check_wall(self, x, y):
         #all the spaces where the player can move are set to false, so if the player enter a space that returns true, then it must be
         #  a wall and therefore the player must be stopped
@@ -91,8 +95,13 @@ class NPC(AnimatedSprite):
                 self.animate_pain()
             elif self.ray_cast_value:
                 self.player_search_trigger = True
-                self.animate(self.walk_images)
-                self.movement()
+                if self.dist < self.attack_dist:
+                    self.animate(self.attack_images)
+                    self.attack()
+                else:
+                    self.animate(self.walk_images)
+                    self.movement()
+
             elif self.player_search_trigger:
                 self.animate(self.walk_images)
                 self.movement()                
