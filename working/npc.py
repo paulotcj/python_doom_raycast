@@ -38,10 +38,12 @@ class NPC(AnimatedSprite):
 
         if MAP_ONLY:
             pg.draw.rect(self.game.screen, 'blue', (100* next_x, 100 * next_y, 100, 100))
-        angle = math.atan2(next_y + 0.5 - self.y, next_x + 0.5 - self.x)
-        dx = math.cos(angle) * self.speed
-        dy = math.sin(angle) * self.speed
-        self.check_wall_collision(dx, dy)
+
+        if next_pos not in self.game.object_handler.npc_positions:
+            angle = math.atan2(next_y + 0.5 - self.y, next_x + 0.5 - self.x)
+            dx = math.cos(angle) * self.speed
+            dy = math.sin(angle) * self.speed
+            self.check_wall_collision(dx, dy)
 
     def check_wall(self, x, y):
         #all the spaces where the player can move are set to false, so if the player enter a space that returns true, then it must be
