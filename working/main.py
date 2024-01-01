@@ -2,7 +2,7 @@ import pygame as pg
 import sys
 from settings import *
 from map import *
-from player import * 
+from player import *
 from raycasting import *
 from object_renderer import *
 from sprite_object import *
@@ -16,6 +16,7 @@ class Game:
         pg.init()
         pg.mouse.set_visible(False)
         self.screen = pg.display.set_mode(RES)
+        pg.event.set_grab(True)
         self.clock = pg.time.Clock()
         self.delta_time = 1
         self.global_trigger = False
@@ -28,19 +29,15 @@ class Game:
         self.player = Player(self)
         self.object_renderer = ObjectRenderer(self) 
         self.raycasting = RayCasting(self)
-        # self.static_sprite = SpriteObject(self)
-        # self.animated_sprite = AnimatedSprite(self)
         self.object_handler = ObjectHandler(self)
         self.weapon = Weapon(self)
         self.sound = Sound(self)
         self.pathfinding = PathFinding(self)
-
+        pg.mixer.music.play(-1)
 
     def update(self):
         self.player.update()
         self.raycasting.update()
-        # self.static_sprite.update()
-        # self.animated_sprite.update()
         self.object_handler.update()
         self.weapon.update()
         pg.display.flip()

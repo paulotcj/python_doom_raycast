@@ -32,6 +32,16 @@ class NPC(AnimatedSprite):
         self.run_logic()
         self.draw_ray_cast()
 
+    def check_wall(self, x, y):
+        #all the spaces where the player can move are set to false, so if the player enter a space that returns true, then it must be
+        #  a wall and therefore the player must be stopped
+        return (x, y) not in self.game.map.world_map
+
+    def check_wall_collision(self, dx, dy):
+        if self.check_wall(int(self.x + dx * self.size), int(self.y)):
+            self.x += dx
+        if self.check_wall(int(self.x), int(self.y + dy  * self.size)):
+            self.y += dy    
     def movement(self):
         next_pos = self.game.pathfinding.get_path(self.map_pos, self.game.player.map_pos)
         next_x, next_y = next_pos
@@ -51,16 +61,7 @@ class NPC(AnimatedSprite):
             if random() < self.accuracy:
                 self.game.player.get_damage(self.attack_damage)
 
-    def check_wall(self, x, y):
-        #all the spaces where the player can move are set to false, so if the player enter a space that returns true, then it must be
-        #  a wall and therefore the player must be stopped
-        return (x, y) not in self.game.map.world_map
-
-    def check_wall_collision(self, dx, dy):
-        if self.check_wall(int(self.x + dx * self.size), int(self.y)):
-            self.x += dx
-        if self.check_wall(int(self.x), int(self.y + dy  * self.size)):
-            self.y += dy        
+    
 
     def animate_death(self):
         if not self.alive:
@@ -85,7 +86,7 @@ class NPC(AnimatedSprite):
                 self.check_health()
 
     def check_health(self):
-        if self.health <= 0:
+        if self.health < 1:
             self.alive = False
             self.game.sound.npc_death.play()
 
@@ -155,27 +156,27 @@ class NPC(AnimatedSprite):
             depth_hor += delta_depth
 
 
-            #verticals
-            x_vert, dx = (x_map + 1, 1) if cos_a > 0 else (x_map - 1e-6, -1)
+        #verticals
+        x_vert, dx = (x_map + 1, 1) if cos_a > 0 else (x_map - 1e-6, -1)
             
-            depth_vert = (x_vert - ox) / cos_a
-            y_vert = oy + depth_vert * sin_a
+        depth_vert = (x_vert - ox) / cos_a
+        y_vert = oy + depth_vert * sin_a
 
-            delta_depth = dx / cos_a
-            dy = delta_depth * sin_a
+        delta_depth = dx / cos_a
+        dy = delta_depth * sin_a
 
-            for i in range(MAX_DEPTH):
-                tile_vert = int(x_vert), int(y_vert)
-                if tile_vert == self.map_pos:
-                    player_dist_v = depth_vert
-                    break
-                if tile_vert in self.game.map.world_map:
-                    wall_dist_v = depth_vert
-                    break
-                x_vert += dx
-                y_vert += dy
+        for i in range(MAX_DEPTH):
+            tile_vert = int(x_vert), int(y_vert)
+            if tile_vert == self.map_pos:
+                player_dist_v = depth_vert
+                break
+            if tile_vert in self.game.map.world_map:
+                wall_dist_v = depth_vert
+                break
+            x_vert += dx
+            y_vert += dy
 
-                depth_vert += delta_depth
+            depth_vert += delta_depth
 
         #end for
         player_dist = max(player_dist_v, player_dist_h)
@@ -192,9 +193,31 @@ class NPC(AnimatedSprite):
                 pg.draw.line(self.game.screen, 'orange', (100 * self.game.player.x, 100 * self.game.player.y),
                             (100 * self.x, 100 * self.y), 2)
 
-        
 
+class SoldierNPC(NPC):
+    def __init__(self, game, path='resources/sprites/npc/soldier/0.png', pos=(10.5, 5.5),
+                 scale=0.6, shift=0.38, animation_time=180):
+        super().__init__(game, path, pos, scale, shift, animation_time)
 
+class CacoDemonNPC(NPC):
+    def __init__(self, game, path='resources/sprites/npc/caco_demon/0.png', pos=(10.5, 6.5),
+                 scale=0.7, shift=0.27, animation_time=250):
+        super().__init__(game, path, pos, scale, shift, animation_time)
+        self.attack_dist = 1.0
+        self.health = 150
+        self.attack_damage = 25
+        self.speed = 0.05
+        self.accuracy = 0.35
+
+class CyberDemonNPC(NPC):
+    def __init__(self, game, path='resources/sprites/npc/cyber_demon/0.png', pos=(11.5, 6.0),
+                 scale=1.0, shift=0.04, animation_time=210):
+        super().__init__(game, path, pos, scale, shift, animation_time)
+        self.attack_dist = 6
+        self.health = 350
+        self.attack_damage = 15
+        self.speed = 0.055
+        self.accuracy = 0.25
 
 
 
